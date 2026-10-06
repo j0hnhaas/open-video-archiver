@@ -1,0 +1,79 @@
+name: tests
+
+on:
+  push:
+    branches:
+      - main
+      - "feat/**"
+      - "refactor/**"
+      - "build/**"
+  pull_request:
+
+jobs:
+  core:
+    name: Core · ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install
+        run: python -m pip install -e . pytest
+      - name: CLI entry point
+        run: ova --version
+      - name: Test
+        run: python -m pytest -q
+      - name: Compile all entry modules
+        run: >-
+          python -m py_compile
+          ova.py ova_core.py ova_acquisition.py ova_constants.py
+          ova_engine.py ova_gui.py ova_gui_app.py
+
+  gui-import:
+    name: PySide6 import · Windows
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install GUI extra
+        run: python -m pip install -e ".[gui]"
+      - name: Construct desktop window
+        shell: pwsh
+        env:
+          QT_QPA_PLATFORM: offscreen
+        run: |
+          python -c "from PySide6.QtWidgets import QApplication; import ova_gui_app; app = QApplication([]); window = ova_gui_app.MainWindow(); print('PySide6 GUI construction OK:', window.windowTitle()); window.close()"
+
+
+  windows-package:
+    name: PyInstaller package · Windows
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install GUI and build extras
+        run: python -m pip install -e ".[gui,build]"
+      - name: Generate Windows resources
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force -Path .build | Out-Null
+          python tools/make_windows_resources.py --icon .build/open-video-archiver.ico --version-file .build/windows-version.txt
+      - name: Build OpenVideoArchiver.exe
+        shell: pwsh
+        run: |
+          $env:OVA_BUILD_ROOT = (Get-Location).Path
+          $env:OVA_ICON_PATH = Join-Path $env:OVA_BUILD_ROOT ".build/open-video-archiver.ico"
+          $env:OVA_VERSION_FILE = Join-Path $env:OVA_BUILD_ROOT ".build/windows-version.txt"
+          python -m PyInstaller --noconfirm --clean --distpath .build/ci-dist --workpath .build/ci-work packaging/OpenVideoArchiver.spec
+          if (-not (Test-Path ".build/ci-dist/OpenVideoArchiver/OpenVideoArchiver.exe")) {
+            throw "OpenVideoArchiver.exe was not created."
+          }
+          Get-Item ".build/ci-dist/OpenVideoArchiver/OpenVideoArchiver.exe" | Format-List Name,Length,FullName

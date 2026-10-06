@@ -1,0 +1,32 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "open-video-archiver"
+version = "1.0.0"
+description = "Preserve online video with metadata, provenance and verifiable integrity — built for journalism, research, OSINT and digital investigations."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [
+  { name = "John G. Haas" }
+]
+dependencies = [
+  "yt-dlp[default,curl-cffi]>=2026.8.19"
+]
+
+[project.optional-dependencies]
+gui = [
+  "PySide6>=6.8,<7"
+]
+build = [
+  "PyInstaller>=6.11,<7"
+]
+
+[project.scripts]
+ova = "ova:main"
+ova-gui = "ova_gui:main"
+
+[tool.setuptools]
+py-modules = ["ova", "ova_core", "ova_acquisition", "ova_constants", "ova_engine", "ova_gui", "ova_gui_app"]
