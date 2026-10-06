@@ -1540,7 +1540,11 @@ class MainWindow(QMainWindow):
 
         info = self.analysis["info"]
         resume = None
-        candidates = session_candidates(root, str(info.get("id") or ""))
+        candidates = session_candidates(
+            root,
+            str(info.get("id") or ""),
+            str(info.get("extractor_key") or info.get("extractor") or ""),
+        )
         if candidates:
             candidate = candidates[0]
             answer = QMessageBox.question(
