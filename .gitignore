@@ -1,0 +1,34 @@
+# Python
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+
+# Packaging
+*.egg-info/
+build/
+.build/
+dist/
+
+# IDE
+.idea/
+
+# Downloaded archive material
+archive/
+*.mp4
+*.mkv
+*.webm
+*.m4a
+*.opus
+*.webp
+*.jpg
+*.jpeg
+*.png
+*.vtt
+*.srt
+*.json
+*.description
+
+# OS
+Thumbs.db
+.DS_Store
