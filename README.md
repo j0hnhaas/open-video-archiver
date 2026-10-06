@@ -55,6 +55,21 @@ After downloading, extract the ZIP and start `OpenVideoArchiver.exe`.
 
 No separate Python, FFmpeg or Deno installation is required on the target computer.
 
+### Windows SmartScreen
+
+Open Video Archiver 1.0 is currently **not code-signed**. Windows may therefore display a Microsoft Defender SmartScreen warning when the application is started for the first time.
+
+If you downloaded Open Video Archiver from this official GitHub repository and the SHA-256 checksum matches the value above:
+
+1. Select **More info** in the SmartScreen dialog.
+2. Select **Run anyway**.
+
+Do **not** disable Microsoft Defender or SmartScreen.
+
+The SmartScreen warning indicates that Windows does not yet recognize the application or its publisher as established. It is not, by itself, a malware detection.
+
+For additional information, see the [VirusTotal analysis for this exact release artifact](https://www.virustotal.com/gui/file/0ef67529f64fc3ef0e7600d2dd0afde393e7f4e002e788e4047a16fc71c47008/detection).
+
 ## Preserve · Document · Verify
 
 **Preserve** — capture the selected video/audio material together with source metadata, description, thumbnail and available source subtitles.
