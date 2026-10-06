@@ -427,7 +427,11 @@ def run() -> int:
     quality_label, format_selector = choose_quality(source_info, mode)
 
     resume = None
-    candidates = session_candidates(root, str(source_info["id"]))
+    candidates = session_candidates(
+        root,
+        str(source_info["id"]),
+        str(source_info.get("extractor_key") or source_info.get("extractor") or ""),
+    )
     if candidates:
         candidate = candidates[0]
         warning(f"Unvollständige frühere Sitzung gefunden:\n  {candidate.folder}")
