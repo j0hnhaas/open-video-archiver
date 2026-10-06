@@ -1,4 +1,4 @@
-"""Launcher for the optional OVA PySide6 desktop application."""
+"""Launcher for the optional Open Video Archiver PySide6 desktop application."""
 
 from __future__ import annotations
 
@@ -11,7 +11,7 @@ def main() -> None:
     except ModuleNotFoundError as exc:
         if exc.name == "PySide6":
             print(
-                "OVA Desktop requires PySide6. Install the GUI extra with:\n"
+                "Open Video Archiver Desktop requires PySide6. Install the GUI extra with:\n"
                 '  python -m pip install -e ".[gui]"',
                 file=sys.stderr,
             )
