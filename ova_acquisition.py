@@ -1,4 +1,4 @@
-"""UI-agnostic source inspection helpers for OVA.
+"""UI-agnostic source inspection helpers for Open Video Archiver.
 
 The module contains the parts of acquisition that a CLI and a future desktop GUI
 need in common: source inspection, subtitle inventory and format/quality models.
