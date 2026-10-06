@@ -127,15 +127,23 @@ $DenoTarget = Join-Path $ToolsRoot "deno"
 New-Item -ItemType Directory -Force -Path $FfmpegTarget, $DenoTarget | Out-Null
 
 $FfmpegSource = [System.IO.Path]::GetFullPath($Ffmpeg.Source)
+$FfprobeSource = [System.IO.Path]::GetFullPath($Ffprobe.Source)
 $FfmpegDir = Split-Path -Parent $FfmpegSource
+$FfprobeDir = Split-Path -Parent $FfprobeSource
 
-# Copy the FFmpeg executables and any adjacent DLLs needed by shared builds.
-Get-ChildItem -Path $FfmpegDir -File |
-    Where-Object { $_.Extension -in @(".exe", ".dll") } |
-    Copy-Item -Destination $FfmpegTarget -Force
+# Copy only the FFmpeg executables Open Video Archiver actually uses.
+# Do not copy ffplay.exe or unrelated tools from the FFmpeg distribution.
+Copy-Item -Path $FfmpegSource -Destination (Join-Path $FfmpegTarget "ffmpeg.exe") -Force
+Copy-Item -Path $FfprobeSource -Destination (Join-Path $FfmpegTarget "ffprobe.exe") -Force
 
-# Ensure the exact ffprobe resolved through PATH is present even if it lives elsewhere.
-Copy-Item -Path ([System.IO.Path]::GetFullPath($Ffprobe.Source)) -Destination (Join-Path $FfmpegTarget "ffprobe.exe") -Force
+# Shared FFmpeg builds may depend on adjacent DLLs. Copy DLLs only, from the
+# directories that contain the selected ffmpeg/ffprobe executables.
+$FfmpegRuntimeDirs = @($FfmpegDir, $FfprobeDir) | Select-Object -Unique
+foreach ($RuntimeDir in $FfmpegRuntimeDirs) {
+    Get-ChildItem -Path $RuntimeDir -Filter "*.dll" -File -ErrorAction SilentlyContinue |
+        Copy-Item -Destination $FfmpegTarget -Force
+}
+
 Copy-Item -Path ([System.IO.Path]::GetFullPath($Deno.Source)) -Destination (Join-Path $DenoTarget "deno.exe") -Force
 
 Copy-Item -Path (Join-Path $Root "LICENSE") -Destination (Join-Path $PortableDir "LICENSE") -Force
