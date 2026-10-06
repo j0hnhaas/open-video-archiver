@@ -340,7 +340,11 @@ def preflight() -> RuntimeEnvironment:
     return RuntimeEnvironment(ffmpeg=ffmpeg, deno=deno, dependencies=dependencies)
 
 
-def session_candidates(root: Path, source_id: str) -> list[ResumeCandidate]:
+def session_candidates(
+    root: Path,
+    source_id: str,
+    source_provider: str | None = None,
+) -> list[ResumeCandidate]:
     candidates: list[tuple[float, ResumeCandidate]] = []
     if not root.exists():
         return []
@@ -348,8 +352,14 @@ def session_candidates(root: Path, source_id: str) -> list[ResumeCandidate]:
     for session_file in root.glob("*/SESSION.json"):
         try:
             data = json.loads(session_file.read_text(encoding="utf-8"))
-            if (data.get("source_id") or data.get("video_id")) != source_id:
+            if data.get("source_id") != source_id:
                 continue
+            if source_provider:
+                candidate_provider = str(
+                    data.get("source_provider") or data.get("extractor") or ""
+                ).strip().lower()
+                if candidate_provider and candidate_provider != source_provider.strip().lower():
+                    continue
             if data.get("status") == "completed":
                 continue
             folder = session_file.parent
@@ -400,7 +410,8 @@ def _prepare_session(request: ArchiveRequest) -> tuple[Path, dict[str, Any], boo
     started = now_local()
     stamp = started.strftime("%Y%m%d_%H%M%S")
     title = sanitize_component(str(info.get("title") or "untitled"), 70)
-    folder_name = f"{stamp}_{source_id}_{title}"
+    safe_source_id = sanitize_component(source_id, 50)
+    folder_name = f"{stamp}_{safe_source_id}_{title}"
     folder = request.output_root / folder_name
     folder.mkdir(parents=True, exist_ok=False)
 
@@ -410,7 +421,6 @@ def _prepare_session(request: ArchiveRequest) -> tuple[Path, dict[str, Any], boo
         "status": "prepared",
         "capture_id": str(uuid.uuid4()),
         "source_id": source_id,
-        "video_id": source_id,
         "entered_url": request.entered_url,
         "canonical_url": request.canonical_url,
         "url": request.canonical_url,
@@ -427,7 +437,7 @@ def _prepare_session(request: ArchiveRequest) -> tuple[Path, dict[str, Any], boo
         "rights_confirmation_count": 1,
         "resume_enabled": True,
         "folder_name": folder_name,
-        "filename_prefix": f"{stamp}_{source_id}",
+        "filename_prefix": f"{stamp}_{safe_source_id}",
     }
     write_json(folder / "SESSION.json", session)
     return folder, session, False
