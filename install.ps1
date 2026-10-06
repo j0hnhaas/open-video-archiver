@@ -1,7 +1,7 @@
 $ErrorActionPreference = "Stop"
 
 Write-Host ""
-Write-Host "Open Video Archiver (OVA) - user installation"
+Write-Host "Open Video Archiver - user installation"
 Write-Host "Copyright (c) 2026 John G. Haas"
 Write-Host ""
 
