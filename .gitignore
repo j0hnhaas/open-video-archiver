@@ -32,3 +32,6 @@ archive/
 # OS
 Thumbs.db
 .DS_Store
+
+# Repository assets
+!assets/open-video-archiver.png
