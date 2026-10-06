@@ -205,7 +205,7 @@ def application_root() -> Path:
 
 
 def portable_tool_directories(root: Path | None = None) -> list[Path]:
-    """Return bundled tool directories that exist beside a portable OVA build."""
+    """Return bundled tool directories beside a portable application build."""
     base = (root or application_root()).resolve()
     candidates = [
         base / "tools" / "ffmpeg",
@@ -218,7 +218,7 @@ def configure_runtime_path(root: Path | None = None) -> list[Path]:
     """Prepend bundled runtime-tool folders to PATH.
 
     Source checkouts continue to use the normal system PATH. Portable Windows
-    builds can place FFmpeg/FFprobe and Deno in tools/ beside OVA.exe.
+    builds can place FFmpeg/FFprobe and Deno in tools/ beside the executable.
     """
     directories = portable_tool_directories(root)
     if not directories:
@@ -739,7 +739,7 @@ def _write_metadata_markdown(
 ## Capture
 
 - **Capture ID:** {session.get("capture_id") or "unknown"}
-- **OVA version:** {APP_VERSION}
+- **Open Video Archiver version:** {APP_VERSION}
 
 ## Source
 
@@ -1038,7 +1038,7 @@ def create_verified_zip(
 
 
 def delete_verified_source_folder(folder: Path, zip_path: Path) -> tuple[int, list[Path]]:
-    """Delete only files proven to be members of a verified OVA ZIP.
+    """Delete only files proven to be members of a verified archive ZIP.
 
     Files that appeared in the source folder after ZIP creation are deliberately
     left untouched.
