@@ -146,7 +146,7 @@ def display_metadata(
         "Kanal/Uploader:     "
         + str(source_info.get("channel") or source_info.get("uploader") or "unbekannt")
     )
-    print(f"Video-ID:           {source_info.get('id') or 'unbekannt'}")
+    print(f"Source ID:          {source_info.get('id') or 'unbekannt'}")
     print(f"Upload-Datum:       {format_upload_date(source_info.get('upload_date'))}")
     print(f"Dauer:              {human_duration(source_info.get('duration'))}")
     print(f"Beste Auflösung:    {best_resolution(source_info)}")
@@ -370,9 +370,9 @@ def parse_args() -> argparse.Namespace:
     if len(sys.argv) > 1 and sys.argv[1].lower() == "verify":
         parser = argparse.ArgumentParser(
             prog="ova verify",
-            description="Verify a OVA archive directory or ZIP without modifying it.",
+            description="Verify an Open Video Archiver directory or ZIP without modifying it.",
         )
-        parser.add_argument("archive", help="OVA archive directory or ZIP")
+        parser.add_argument("archive", help="Open Video Archiver directory or ZIP")
         args = parser.parse_args(sys.argv[2:])
         args.command = "verify"
         args.url = None
@@ -380,9 +380,9 @@ def parse_args() -> argparse.Namespace:
         return args
 
     parser = argparse.ArgumentParser(
-        description="Forensic-style, documented Online-Video archiving workflow"
+        description="Documented, integrity-checked online-video archiving workflow"
     )
-    parser.add_argument("url", nargs="?", help="Online-Video video URL or video ID")
+    parser.add_argument("url", nargs="?", help="Online video URL")
     parser.add_argument("-o", "--output", help="Base archive directory")
     parser.add_argument("--version", action="version", version=f"%(prog)s {APP_VERSION}")
     args = parser.parse_args()
