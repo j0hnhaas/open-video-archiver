@@ -32,7 +32,7 @@ def test_source_identity_is_platform_neutral() -> None:
     )
     assert source["provider"] == "ExampleVideo"
     assert source["source_id"] == "abc"
-    assert source["entered_url"].startswith("https://youtu.be/")
+    assert source["entered_url"] == "https://video.example/source/abc"
 
 
 def test_privacy_safe_executable_strips_path() -> None:
