@@ -10,7 +10,9 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/j0hnhaas/open-video-archiver/releases"><strong>⬇ Download for Windows</strong></a>
+  <a href="https://github.com/j0hnhaas/open-video-archiver/releases/download/v1.0.0/Open-Video-Archiver-1.0-Windows-x64-Portable.zip"><strong>⬇ Download Windows portable (271.4 MB)</strong></a>
+  &nbsp;·&nbsp;
+  <a href="https://github.com/j0hnhaas/open-video-archiver/releases">All releases</a>
   &nbsp;·&nbsp;
   <a href="#install-from-source">Install from source</a>
 </p>
@@ -31,15 +33,25 @@ Open Video Archiver is built around a different question:
 
 ## Windows portable
 
-The recommended way to use Open Video Archiver on Windows is the portable release.
+**Current release: Open Video Archiver 1.0**
 
-1. Open **[Releases](https://github.com/j0hnhaas/open-video-archiver/releases)**.
-2. Download the latest `Open-Video-Archiver-…-Windows-x64-Portable.zip`.
-3. Optionally verify the accompanying `.sha256` file.
-4. Extract the ZIP.
-5. Start `OpenVideoArchiver.exe`.
+- **Windows x64 portable ZIP:** 271.4 MB
+- **Installation:** none — extract and run `OpenVideoArchiver.exe`
+- **Runtime:** Python/Qt, FFmpeg/FFprobe and Deno are included
+- **Integrity:** SHA-256 checksum file is provided
+- **Malware analysis:** [VirusTotal report for this exact release artifact](https://www.virustotal.com/gui/file/0ef67529f64fc3ef0e7600d2dd0afde393e7f4e002e788e4047a16fc71c47008/detection)
 
-The portable package contains the application together with its required runtime components, including Python/Qt, FFmpeg/FFprobe and Deno.
+**[⬇ Download Open Video Archiver 1.0 for Windows x64](https://github.com/j0hnhaas/open-video-archiver/releases/download/v1.0.0/Open-Video-Archiver-1.0-Windows-x64-Portable.zip)**
+
+SHA-256:
+
+`0ef67529f64fc3ef0e7600d2dd0afde393e7f4e002e788e4047a16fc71c47008`
+
+The accompanying checksum file is available on the [v1.0.0 release page](https://github.com/j0hnhaas/open-video-archiver/releases/tag/v1.0.0).
+
+VirusTotal results are provided as additional information and do not constitute a security certification or guarantee.
+
+After downloading, extract the ZIP and start `OpenVideoArchiver.exe`.
 
 No separate Python, FFmpeg or Deno installation is required on the target computer.
 
