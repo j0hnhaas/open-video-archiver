@@ -141,7 +141,7 @@ class MinimalCheckBox(QCheckBox):
 
 
 def make_app_icon(size: int = 64) -> QIcon:
-    """Create a small in-memory OVA icon without requiring an external asset."""
+    """Create a small in-memory application icon without an external asset."""
     pixmap = QPixmap(size, size)
     pixmap.fill(Qt.GlobalColor.transparent)
 
@@ -176,7 +176,7 @@ def fetch_thumbnail_bytes(url: str | None) -> bytes | None:
     try:
         request = urllib.request.Request(
             url,
-            headers={"User-Agent": "Mozilla/5.0 OVA/1.0"},
+            headers={"User-Agent": "OpenVideoArchiver/1.0"},
         )
         with urllib.request.urlopen(request, timeout=8) as response:
             data = response.read(6 * 1024 * 1024)
@@ -431,7 +431,7 @@ class MainWindow(QMainWindow):
         source_input = QHBoxLayout()
         source_input.setSpacing(10)
         self.url_edit = QLineEdit()
-        self.url_edit.setPlaceholderText("Online video URL or 11-character video ID")
+        self.url_edit.setPlaceholderText("Online video URL")
         self.url_edit.returnPressed.connect(self._analyze_source)
 
         self.analyze_button = QPushButton("Analyze Source")
@@ -773,7 +773,7 @@ class MainWindow(QMainWindow):
     def _build_verify_page(self) -> QWidget:
         page, layout = self._page_shell(
             "Verify Archive",
-            "Check a OVA archive directory or ZIP against its manifest and SHA-256 "
+            "Check an Open Video Archiver directory or ZIP against its manifest and SHA-256 "
             "records without modifying it.",
         )
 
@@ -783,7 +783,7 @@ class MainWindow(QMainWindow):
 
         self.verify_target_edit = QLineEdit()
         self.verify_target_edit.setPlaceholderText(
-            "OVA archive directory or verified ZIP container"
+            "Open Video Archiver directory or verified ZIP container"
         )
 
         browse_folder = QPushButton("Folder…")
@@ -833,7 +833,7 @@ class MainWindow(QMainWindow):
         icon.setPixmap(icon_pixmap(48))
         title_block = QLabel(
             f"<b>{APP_NAME}</b><br>"
-            f"<span style='color:#687386'>OVA {APP_VERSION} · Desktop</span>"
+            f"<span style='color:#687386'>Version {APP_VERSION} · Desktop</span>"
         )
         title_block.setObjectName("aboutTitle")
         icon_row.addWidget(icon)
@@ -843,7 +843,7 @@ class MainWindow(QMainWindow):
 
         body = QLabel(
             f"<b>{POSITIONING}</b><br><br>"
-            "OVA preserves media together with source metadata, acquisition provenance, "
+            "Open Video Archiver preserves media together with source metadata, acquisition provenance, "
             "a versioned manifest and SHA-256 integrity records.<br><br>"
             "The desktop application and command-line interface use the same Python "
             "acquisition and verification engine.<br><br>"
@@ -855,7 +855,7 @@ class MainWindow(QMainWindow):
         box_layout.addWidget(body)
 
         note = QLabel(
-            "<b>Scope:</b> OVA documents acquisition and integrity. It does not "
+            "<b>Scope:</b> Open Video Archiver documents acquisition and integrity. It does not "
             "independently certify authorship, authenticity or legal admissibility."
         )
         note.setWordWrap(True)
@@ -1288,7 +1288,7 @@ class MainWindow(QMainWindow):
             QMessageBox.warning(
                 self,
                 "Source required",
-                "Enter a Online video URL or video ID.",
+                "Enter an online video URL.",
             )
             return
         if self._thread is not None:
