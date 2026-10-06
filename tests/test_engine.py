@@ -17,6 +17,8 @@ from ova_engine import (
     delete_verified_source_folder,
     normalize_url,
     portable_tool_directories,
+    sanitize_component,
+    session_candidates,
 )
 
 
@@ -79,6 +81,30 @@ def test_cancel_token() -> None:
     token.cancel()
     with pytest.raises(ArchiveCancelled):
         token.raise_if_cancelled()
+
+
+def test_source_id_is_safe_for_paths() -> None:
+    assert sanitize_component("provider:item/42", 50) == "provider-item-42"
+
+
+def test_resume_candidates_are_provider_aware(tmp_path: Path) -> None:
+    first = tmp_path / "first"
+    second = tmp_path / "second"
+    first.mkdir()
+    second.mkdir()
+
+    (first / "SESSION.json").write_text(
+        '{"source_id":"same-id","source_provider":"ProviderA","status":"downloading"}\n',
+        encoding="utf-8",
+    )
+    (second / "SESSION.json").write_text(
+        '{"source_id":"same-id","source_provider":"ProviderB","status":"downloading"}\n',
+        encoding="utf-8",
+    )
+
+    matches = session_candidates(tmp_path, "same-id", "ProviderB")
+    assert len(matches) == 1
+    assert matches[0].folder == second
 
 
 def test_portable_runtime_path(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
