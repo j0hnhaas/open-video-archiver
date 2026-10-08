@@ -1,0 +1,6 @@
+# Pinned top-level dependencies for the GitHub Windows release workflow.
+# Keep this file separate from the broader development constraints in pyproject.toml.
+yt-dlp[default,curl-cffi]==2026.8.19
+PySide6==6.11.2
+PyInstaller==6.22.3
+pytest==8.4.2

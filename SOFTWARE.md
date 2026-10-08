@@ -6,6 +6,7 @@ This repository coordinates several independent software components.
 |---|---|---|---|---|
 | Open Video Archiver | John G. Haas / repository contributors | Documented archive workflow | MIT | https://github.com/j0hnhaas/open-video-archiver |
 | Python | Python Software Foundation and contributors | Runtime and standard library | Python Software Foundation License Version 2, plus applicable historical compatible licenses | https://www.python.org/ |
+| PySide6 / Qt for Python | Qt Project | Desktop GUI bindings and bundled Qt runtime | LGPL-3.0-only OR GPL-2.0-only OR GPL-3.0-only (see upstream package/module terms) | https://doc.qt.io/qtforpython-6/ |
 | yt-dlp | yt-dlp project and contributors | Metadata retrieval and media/subtitle download | The Unlicense | https://github.com/yt-dlp/yt-dlp |
 | yt-dlp-ejs | yt-dlp project and contributors | External JavaScript challenge solver scripts | The Unlicense | https://github.com/yt-dlp/ejs |
 | Deno | Deno authors / Deno Land Inc. | JavaScript runtime used by yt-dlp EJS challenge solving | MIT | https://deno.com/ |
@@ -19,6 +20,10 @@ Open Video Archiver is distributed under the MIT License.
 Copyright (c) 2026 John G. Haas.
 
 The copyright and permission notice must be retained in copies or substantial portions of the software.
+
+## Qt / PySide6 note
+
+The Windows portable build contains PySide6 and the Qt libraries required by the desktop application. Their open-source licensing and notice requirements are governed by the applicable Qt for Python / Qt module licenses; consult the upstream licensing information when redistributing binaries.
 
 ## FFmpeg note
 

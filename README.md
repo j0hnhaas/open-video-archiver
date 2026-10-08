@@ -70,6 +70,16 @@ The SmartScreen warning indicates that Windows does not yet recognize the applic
 
 For additional information, see the [VirusTotal analysis for this exact release artifact](https://www.virustotal.com/gui/file/0ef67529f64fc3ef0e7600d2dd0afde393e7f4e002e788e4047a16fc71c47008/detection).
 
+## Code signing policy
+
+Open Video Archiver is preparing its release pipeline for the **SignPath Foundation Open Source Code Signing** program. The current **v1.0.0** Windows release remains unsigned; future release notes will explicitly state whether a release is signed.
+
+Planned signing service: **Free code signing provided by SignPath.io, certificate by SignPath Foundation.**
+
+The project's signing roles, privacy rule, release controls and upstream-binary policy are documented in [CODE_SIGNING.md](CODE_SIGNING.md).
+
+Only Open Video Archiver binaries produced from this repository are eligible for the project's signature. Bundled upstream binaries such as FFmpeg/FFprobe and Deno are not signed with the Open Video Archiver signing identity.
+
 ## Preserve · Document · Verify
 
 **Preserve** — capture the selected video/audio material together with source metadata, description, thumbnail and available source subtitles.
@@ -221,6 +231,22 @@ ova "<VIDEO_URL>" -o "D:\Video-Archive"
 
 Press **Ctrl+C** at any time to cancel safely. Partial downloads are preserved for resume.
 
+## Uninstallation
+
+### Windows portable
+
+Open Video Archiver Portable does not install a Windows service or system-wide application. Close the program and delete the extracted Open Video Archiver directory to remove it.
+
+### Source installation
+
+If Open Video Archiver was installed with the PowerShell helper or with `pip`, uninstall the Python package with:
+
+```powershell
+python -m pip uninstall open-video-archiver
+```
+
+The helper may add the Python user Scripts directory to the user's `PATH`. That directory can also be used by other Python applications, so it should only be removed from `PATH` if it is no longer needed for anything else.
+
 ## Build the Windows portable release
 
 On a Windows development machine with FFmpeg/FFprobe and Deno available:
@@ -239,6 +265,8 @@ dist\Open-Video-Archiver-1.0-Windows-x64-Portable.zip.sha256
 ```
 
 The portable folder contains `OpenVideoArchiver.exe`, the Python/Qt runtime, FFmpeg/FFprobe, Deno, the MIT license and software-provenance documentation.
+
+For release candidates, the repository also contains a GitHub-hosted workflow at `.github/workflows/release-signing.yml`. It builds from pinned top-level release dependencies and verified FFmpeg/Deno archives, uploads the unsigned build as a GitHub Actions artifact, and can submit that exact artifact to SignPath after the SignPath project is configured and accepted.
 
 ## Privacy-safe provenance
 

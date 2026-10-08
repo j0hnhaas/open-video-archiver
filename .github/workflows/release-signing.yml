@@ -1,0 +1,134 @@
+name: Release candidate - SignPath ready
+
+on:
+  workflow_dispatch:
+    inputs:
+      expected_version:
+        description: "Expected APP_VERSION (for example 1.1)"
+        required: true
+        type: string
+      submit_to_signpath:
+        description: "Submit the GitHub Actions artifact to SignPath"
+        required: true
+        default: false
+        type: boolean
+
+permissions:
+  actions: read
+  contents: read
+
+jobs:
+  build-and-sign:
+    name: Build and optionally sign Windows portable
+    runs-on: windows-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Validate application version
+        id: version
+        shell: pwsh
+        run: |
+          $Version = (python -c "from ova_constants import APP_VERSION; print(APP_VERSION)").Trim()
+          if ($Version -ne "${{ inputs.expected_version }}") {
+            throw "APP_VERSION is '$Version' but workflow input expected_version is '${{ inputs.expected_version }}'."
+          }
+          "version=$Version" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
+
+      - name: Install pinned release dependencies
+        shell: pwsh
+        run: |
+          python -m pip install -r requirements-release.txt
+          python -m pip install --no-deps -e .
+          python -m pip --version
+          python -m pip freeze
+
+      - name: Prepare verified FFmpeg and Deno
+        shell: pwsh
+        run: .\tools\prepare_release_tools.ps1
+
+      - name: Run tests
+        shell: pwsh
+        run: python -m pytest -q
+
+      - name: Build unsigned portable directory
+        id: build
+        shell: pwsh
+        run: |
+          .\build-windows.ps1 -SkipInstall -NoZip
+          $Package = Get-ChildItem -Path dist -Directory -Filter "Open-Video-Archiver-*-Windows-x64-Portable" | Select-Object -First 1
+          if (-not $Package) {
+            throw "Portable package directory was not created."
+          }
+          "package_dir=$($Package.FullName)" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
+
+      - name: Upload unsigned artifact
+        id: upload_unsigned
+        uses: actions/upload-artifact@v4
+        with:
+          name: "Open-Video-Archiver-${{ steps.version.outputs.version }}-Windows-x64-unsigned"
+          path: "${{ steps.build.outputs.package_dir }}"
+          if-no-files-found: error
+          retention-days: 7
+
+      - name: Submit signing request to SignPath
+        if: "${{ inputs.submit_to_signpath }}"
+        uses: signpath/github-action-submit-signing-request@v3
+        with:
+          api-token: "${{ secrets.SIGNPATH_API_TOKEN }}"
+          organization-id: "${{ vars.SIGNPATH_ORGANIZATION_ID }}"
+          project-slug: "${{ vars.SIGNPATH_PROJECT_SLUG }}"
+          signing-policy-slug: "${{ vars.SIGNPATH_SIGNING_POLICY_SLUG }}"
+          github-artifact-id: "${{ steps.upload_unsigned.outputs.artifact-id }}"
+          wait-for-completion: true
+          output-artifact-directory: signed-artifact
+
+      - name: Verify and package signed release candidate
+        if: "${{ inputs.submit_to_signpath }}"
+        id: signed_package
+        shell: pwsh
+        run: |
+          $Exe = Get-ChildItem -Path signed-artifact -Recurse -File -Filter "OpenVideoArchiver.exe" | Select-Object -First 1
+          if (-not $Exe) {
+            throw "Signed artifact does not contain OpenVideoArchiver.exe."
+          }
+
+          $Signature = Get-AuthenticodeSignature -FilePath $Exe.FullName
+          $Signature | Format-List Status,StatusMessage,SignerCertificate
+          if ($Signature.Status -ne "Valid") {
+            throw "OpenVideoArchiver.exe does not have a valid Authenticode signature."
+          }
+
+          $Version = "${{ steps.version.outputs.version }}"
+          $PackageName = "Open-Video-Archiver-$Version-Windows-x64-Portable"
+          $ReleaseRoot = Join-Path (Get-Location) "signed-release"
+          $PortableDir = Join-Path $ReleaseRoot $PackageName
+          $ZipPath = Join-Path $ReleaseRoot "$PackageName.zip"
+          $HashPath = "$ZipPath.sha256"
+
+          New-Item -ItemType Directory -Force -Path $PortableDir | Out-Null
+          Copy-Item -Path (Join-Path $Exe.Directory.FullName "*") -Destination $PortableDir -Recurse -Force
+
+          Compress-Archive -Path $PortableDir -DestinationPath $ZipPath -CompressionLevel Optimal -Force
+          $Hash = (Get-FileHash -Path $ZipPath -Algorithm SHA256).Hash.ToLowerInvariant()
+          "$Hash  $([System.IO.Path]::GetFileName($ZipPath))" | Set-Content -Path $HashPath -Encoding ASCII
+
+          "zip_path=$ZipPath" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
+          "hash_path=$HashPath" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
+
+      - name: Upload signed release candidate
+        if: "${{ inputs.submit_to_signpath }}"
+        uses: actions/upload-artifact@v4
+        with:
+          name: "Open-Video-Archiver-${{ steps.version.outputs.version }}-Windows-x64-signed"
+          path: |
+            ${{ steps.signed_package.outputs.zip_path }}
+            ${{ steps.signed_package.outputs.hash_path }}
+          if-no-files-found: error
+          retention-days: 30
