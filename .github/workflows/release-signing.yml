@@ -88,8 +88,6 @@ jobs:
           github-artifact-id: "${{ steps.upload_unsigned.outputs.artifact-id }}"
           wait-for-completion: true
           output-artifact-directory: signed-artifact
-          parameters: |
-            version: ${{ toJSON(steps.version.outputs.version) }}
 
       - name: Verify and package signed release candidate
         if: "${{ inputs.submit_to_signpath }}"
