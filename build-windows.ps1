@@ -152,6 +152,9 @@ Copy-Item -Path (Join-Path $Root "PORTABLE_README.txt") -Destination (Join-Path 
 
 $PythonVersion = (& python --version 2>&1 | Select-Object -First 1)
 $PyInstallerVersion = (& python -m PyInstaller --version 2>&1 | Select-Object -First 1)
+$YtDlpVersion = (& python -c "import yt_dlp.version; print(yt_dlp.version.__version__)" 2>&1 | Select-Object -First 1)
+$PySideVersion = (& python -c "import PySide6; print(PySide6.__version__)" 2>&1 | Select-Object -First 1)
+$CurlCffiVersion = (& python -c "import curl_cffi; print(getattr(curl_cffi, '__version__', 'unknown'))" 2>&1 | Select-Object -First 1)
 $FfmpegVersion = (& $Ffmpeg.Source -version 2>&1 | Select-Object -First 1)
 $DenoVersion = (& $Deno.Source --version 2>&1 | Select-Object -First 1)
 
@@ -163,6 +166,9 @@ Architecture: $ArchitectureLabel
 Built: $(Get-Date -Format "yyyy-MM-ddTHH:mm:ssK")
 Python: $PythonVersion
 PyInstaller: $PyInstallerVersion
+yt-dlp: $YtDlpVersion
+PySide6: $PySideVersion
+curl_cffi: $CurlCffiVersion
 FFmpeg: $FfmpegVersion
 Deno: $DenoVersion
 Source: https://github.com/j0hnhaas/open-video-archiver
