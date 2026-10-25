@@ -1,7 +1,7 @@
 {
   "schema": "ova-repository-stats/1.0",
   "repository": "j0hnhaas/open-video-archiver",
-  "updated_at": "2026-10-24T08:07:20.994248Z",
+  "updated_at": "2026-10-25T08:24:45.545811Z",
   "traffic": {
     "views": {},
     "clones": {}
@@ -297,6 +297,22 @@
     },
     {
       "date": "2026-10-24",
+      "stars": 0,
+      "forks": 0,
+      "subscribers": 0,
+      "open_issues": 0,
+      "release_downloads_total": 6,
+      "release_assets": {
+        "v1.0.0": {
+          "Open-Video-Archiver-1.0-Windows-x64-Portable.zip": 6,
+          "Open-Video-Archiver-1.0-Windows-x64-Portable.zip.sha256": 0
+        }
+      },
+      "traffic_status": "unavailable",
+      "traffic_note": "TRAFFIC_TOKEN is not configured"
+    },
+    {
+      "date": "2026-10-25",
       "stars": 0,
       "forks": 0,
       "subscribers": 0,
